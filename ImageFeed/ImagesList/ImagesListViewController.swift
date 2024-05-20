@@ -10,7 +10,7 @@ import UIKit
 class ImagesListViewController: UIViewController {
     
 
-    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private weak var tableView: UITableView!
     
     private let photosName: [String] = Array(0..<20).map{ "\($0)"}
     
@@ -29,8 +29,6 @@ class ImagesListViewController: UIViewController {
         tableView.backgroundColor = UIColor(named: "YP Black")
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    
-  
 }
 
 extension ImagesListViewController: UITableViewDataSource {
@@ -84,5 +82,4 @@ extension ImagesListViewController: UITableViewDelegate {
         let cellHeight = image.size.height * scale + imageInserts.top + imageInserts.bottom
         return cellHeight
     }
-    
 }
