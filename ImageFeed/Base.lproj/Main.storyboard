@@ -39,74 +39,10 @@
                     <view key="view" contentMode="scaleToFill" id="fMG-7W-oAz">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="wlR-Wx-Eam" userLabel="Profile Image View">
-                                <rect key="frame" x="16" y="91" width="70" height="70"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="70" id="Mh5-NO-fkl"/>
-                                    <constraint firstAttribute="width" secondItem="wlR-Wx-Eam" secondAttribute="height" multiplier="1:1" id="bgm-fe-DSv"/>
-                                </constraints>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Екатерина Новикова" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ol-wy-S4S" userLabel="Name Label">
-                                <rect key="frame" x="16" y="169" width="251" height="28"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="23"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@ekaterina_nov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y9i-y8-ooS" userLabel="Login Name">
-                                <rect key="frame" x="16" y="205" width="149" height="16"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" name="TableBackGround"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ehu-5v-WLX" userLabel="Logout Button">
-                                <rect key="frame" x="370" y="104" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="a8k-Ke-x3n"/>
-                                    <constraint firstAttribute="height" constant="44" id="pMv-wD-Ej4"/>
-                                </constraints>
-                                <color key="tintColor" red="1" green="0.232715845" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="Exit">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="didTapLogoutButton:" destination="b2J-am-bax" eventType="touchUpInside" id="Rcc-zI-f0U"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello, World!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2gF-ZJ-EVb" userLabel="Description">
-                                <rect key="frame" x="16" y="229" width="128" height="16"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="P57-Os-8pa"/>
                         <color key="backgroundColor" name="BackGround"/>
-                        <constraints>
-                            <constraint firstItem="y9i-y8-ooS" firstAttribute="top" secondItem="5Ol-wy-S4S" secondAttribute="bottom" constant="8" symbolic="YES" id="3Rk-RT-6ft"/>
-                            <constraint firstItem="ehu-5v-WLX" firstAttribute="centerY" secondItem="wlR-Wx-Eam" secondAttribute="centerY" id="420-K0-92M"/>
-                            <constraint firstItem="5Ol-wy-S4S" firstAttribute="top" secondItem="wlR-Wx-Eam" secondAttribute="bottom" constant="8" symbolic="YES" id="5em-Xj-jBW"/>
-                            <constraint firstItem="wlR-Wx-Eam" firstAttribute="leading" secondItem="P57-Os-8pa" secondAttribute="leading" constant="16" id="MfW-Z2-aYd"/>
-                            <constraint firstItem="P57-Os-8pa" firstAttribute="trailing" secondItem="ehu-5v-WLX" secondAttribute="trailing" constant="16" id="RTT-qA-2zJ"/>
-                            <constraint firstItem="y9i-y8-ooS" firstAttribute="leading" secondItem="2gF-ZJ-EVb" secondAttribute="leading" id="SQl-ha-dac"/>
-                            <constraint firstItem="P57-Os-8pa" firstAttribute="trailing" secondItem="2gF-ZJ-EVb" secondAttribute="trailing" constant="286" id="T0B-cg-Esk"/>
-                            <constraint firstItem="5Ol-wy-S4S" firstAttribute="leading" secondItem="wlR-Wx-Eam" secondAttribute="leading" id="bDn-uc-aCP"/>
-                            <constraint firstItem="P57-Os-8pa" firstAttribute="trailing" secondItem="5Ol-wy-S4S" secondAttribute="trailing" constant="163" id="do9-f9-UMd"/>
-                            <constraint firstItem="2gF-ZJ-EVb" firstAttribute="top" secondItem="y9i-y8-ooS" secondAttribute="bottom" constant="8" symbolic="YES" id="fXx-tK-wKb"/>
-                            <constraint firstItem="P57-Os-8pa" firstAttribute="trailing" secondItem="y9i-y8-ooS" secondAttribute="trailing" constant="265" id="tlp-Tz-3LX"/>
-                            <constraint firstItem="wlR-Wx-Eam" firstAttribute="top" secondItem="P57-Os-8pa" secondAttribute="top" constant="32" id="u2s-n5-d8A"/>
-                            <constraint firstItem="y9i-y8-ooS" firstAttribute="leading" secondItem="5Ol-wy-S4S" secondAttribute="leading" id="uIP-uI-OZJ"/>
-                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="qcC-ik-Xn4"/>
-                    <connections>
-                        <outlet property="ProfileImage" destination="wlR-Wx-Eam" id="dbI-D4-OaE"/>
-                        <outlet property="descriptionLabel" destination="2gF-ZJ-EVb" id="5E0-cC-TD2"/>
-                        <outlet property="loginNameLabel" destination="y9i-y8-ooS" id="vxL-Bf-kRg"/>
-                        <outlet property="logoutButton" destination="ehu-5v-WLX" id="Utg-7K-pSw"/>
-                        <outlet property="nameLabel" destination="5Ol-wy-S4S" id="Tzk-0h-A8Y"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yBF-Ab-TjD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -210,10 +146,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" placeholderIntrinsicWidth="430" placeholderIntrinsicHeight="932" translatesAutoresizingMaskIntoConstraints="NO" id="3ik-nK-1mt">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" ambiguous="YES" placeholderIntrinsicWidth="430" placeholderIntrinsicHeight="932" translatesAutoresizingMaskIntoConstraints="NO" id="3ik-nK-1mt">
                                 <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="qh9-0x-yhs">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="qh9-0x-yhs">
                                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -303,9 +239,7 @@
     <resources>
         <image name="0" width="1600" height="1059"/>
         <image name="Backward" width="24" height="24"/>
-        <image name="Exit" width="24" height="24"/>
         <image name="Sharing" width="51" height="51"/>
-        <image name="avatar" width="70" height="70"/>
         <image name="like_button_on" width="42" height="42"/>
         <image name="tab_editorial_active" width="31" height="30"/>
         <image name="tab_profile_active" width="31" height="30"/>

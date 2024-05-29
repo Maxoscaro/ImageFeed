@@ -16,7 +16,6 @@ final class SingleImageViewController: UIViewController {
             imageView.image = image
             imageView.frame.size = image.size
             rescaleAndCenterImageInScrollView(image: image)
-            
         }
     }
     
@@ -44,8 +43,6 @@ final class SingleImageViewController: UIViewController {
         imageView.image = image
         imageView.frame.size = image.size
         rescaleAndCenterImageInScrollView(image: image)
-        
-       
     }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
@@ -60,10 +57,6 @@ final class SingleImageViewController: UIViewController {
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
         centerImage()
-        //        let newContentSize = scrollView.contentSize
-//        let x = (newContentSize.width - visibleRectSize.width) / 2
-//        let y = (newContentSize.height - visibleRectSize.height) / 2
-//        scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
     
     private func centerImage() {
@@ -72,8 +65,6 @@ final class SingleImageViewController: UIViewController {
         let x = imageViewSize.width < scrollViewSize.width ? (scrollViewSize.width - imageViewSize.width) / 2 : 0
         let y = imageViewSize.height < scrollViewSize.height ? (scrollViewSize.height - imageViewSize.height) / 2 : 0
         scrollView.contentInset = UIEdgeInsets(top: y, left: x, bottom: y, right: x)
-
-        
     }
 }
 
