@@ -11,7 +11,7 @@ final class SplashScreenViewController: UIViewController {
     
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     
-    private let oauth2Service = OAuth2Service()
+    private let oauth2Service = OAuth2Service.shared
     private let oauth2TokenStorage = OAuth2TokenStorage()
     
     override func viewDidAppear(_ animated: Bool) {
@@ -54,7 +54,7 @@ final class SplashScreenViewController: UIViewController {
     }
 
     extension SplashScreenViewController: AuthViewControllerDelegate {
-        func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
+        func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
             dismiss(animated: true) { [weak self] in
                 guard let self = self else { return }
                 self.fetchOAuthToken(code)
@@ -67,9 +67,9 @@ final class SplashScreenViewController: UIViewController {
                 switch result {
                 case .success:
                     self.switchToTabBarController()
-                case .failure:
-                    // TODO [Sprint 11]
-                    break
+                case .failure(let error):
+                    print("Ошибка при получении OAuth токена: \(error.localizedDescription)")
+                  
                 }
             }
         }

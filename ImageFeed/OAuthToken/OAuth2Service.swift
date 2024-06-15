@@ -8,7 +8,9 @@
 import Foundation
 
 final class OAuth2Service {
-   
+    
+    static let shared = OAuth2Service()
+    private init() {}
     
     func makeOAuthTokenRequest(code: String?) ->URLRequest? {
         guard let code = code else {
