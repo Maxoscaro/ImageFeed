@@ -19,7 +19,7 @@ final class OAuth2Service {
         }
         
         var urlComponents = URLComponents()
-        urlComponents.path = "/oauth/token"
+        urlComponents.path = Constants.authPath
         
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
@@ -29,7 +29,7 @@ final class OAuth2Service {
             URLQueryItem(name: "grant_type", value: "authorization_code")
         ]
         
-        guard let url = urlComponents.url else {
+        guard let url = urlComponents.url(relativeTo: Constants.defaultBaseURL) else {
             print("Failed to construct URL from components")
             return nil
         }

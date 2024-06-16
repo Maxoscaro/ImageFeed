@@ -44,8 +44,12 @@ final class SplashScreenViewController: UIViewController {
             if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
                 guard
                     let navigationController = segue.destination as? UINavigationController,
-                    let viewController = navigationController.viewControllers[0] as? AuthViewController
-                else { fatalError("Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)") }
+                    let viewController = navigationController.viewControllers[0] as?
+                        AuthViewController
+                else {
+                    assertionFailure("Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)")
+                    return
+                }
                 viewController.delegate = self
             } else {
                 super.prepare(for: segue, sender: sender)
@@ -57,10 +61,10 @@ final class SplashScreenViewController: UIViewController {
         func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
             dismiss(animated: true) { [weak self] in
                 guard let self = self else { return }
+                
                 self.fetchOAuthToken(code)
             }
         }
-
         private func fetchOAuthToken(_ code: String) {
             oauth2Service.fetchOAuthToken(with: code) { [weak self] result in
                 guard let self = self else { return }
