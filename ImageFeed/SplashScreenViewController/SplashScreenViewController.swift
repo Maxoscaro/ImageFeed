@@ -9,7 +9,7 @@ import UIKit
 
 final class SplashScreenViewController: UIViewController {
     
-    private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
+    private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     
     private let oauth2Service = OAuth2Service.shared
     private let oauth2TokenStorage = OAuth2TokenStorage()
@@ -19,7 +19,7 @@ final class SplashScreenViewController: UIViewController {
         if oauth2TokenStorage.token != nil {
             switchToTabBarController()
         } else {
-            performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
+            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
     
@@ -41,13 +41,13 @@ final class SplashScreenViewController: UIViewController {
 }
     extension SplashScreenViewController {
         override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-            if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
+            if segue.identifier == showAuthenticationScreenSegueIdentifier {
                 guard
                     let navigationController = segue.destination as? UINavigationController,
                     let viewController = navigationController.viewControllers[0] as?
                         AuthViewController
                 else {
-                    assertionFailure("Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)")
+                    assertionFailure("Failed to prepare for \(showAuthenticationScreenSegueIdentifier)")
                     return
                 }
                 viewController.delegate = self
@@ -62,19 +62,8 @@ final class SplashScreenViewController: UIViewController {
             dismiss(animated: true) { [weak self] in
                 guard let self = self else { return }
                 
-                self.fetchOAuthToken(code)
+                switchToTabBarController()
             }
         }
-        private func fetchOAuthToken(_ code: String) {
-            oauth2Service.fetchOAuthToken(with: code) { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success:
-                    self.switchToTabBarController()
-                case .failure(let error):
-                    print("Ошибка при получении OAuth токена: \(error.localizedDescription)")
-                  
-                }
-            }
-        }
+   
     }

@@ -12,14 +12,15 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    private let ShowWebViewSegueIdentifier = "ShowWebView"
     
     weak var delegate: AuthViewControllerDelegate?
     
+    private let showWebViewSegueIdentifier = "ShowWebView"
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ShowWebViewSegueIdentifier {
+        if segue.identifier == showWebViewSegueIdentifier {
             guard let webViewViewController = segue.destination as? WebViewViewController else {
-                fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)")
+                fatalError("Failed to prepare for \(showWebViewSegueIdentifier)")
             }
             webViewViewController.delegate = self
         } else {
@@ -30,8 +31,18 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
-    }
+      
+        OAuth2Service.shared.fetchOAuthToken(with: code) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    self.delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
+                    case .failure(let error):
+                    print("Ошибка при получении OAuth токена: \(error.localizedDescription)")
+                  
+                }
+            }
+        }
     
     func webViewViewControllerdidCancel(_ vc: WebViewViewController) {
         dismiss(animated: true)

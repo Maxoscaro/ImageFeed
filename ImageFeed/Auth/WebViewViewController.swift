@@ -38,8 +38,6 @@ final class WebViewViewController: UIViewController {
         updateProgress()
     }
     
-    
-    
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
             print("Unknown Error")
