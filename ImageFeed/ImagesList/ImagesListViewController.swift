@@ -27,8 +27,12 @@ class ImagesListViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.rowHeight = 200
-        tableView.backgroundColor = UIColor(named: "YP Black")
+        tableView.backgroundColor = UIColor(named: "ypBlack")
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
