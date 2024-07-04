@@ -8,6 +8,15 @@
 import UIKit
 
 final class ProfileViewController: UIViewController {
+    
+    private var nameLabel: UILabel?
+       private var loginNameLabel: UILabel?
+       private var descriptionLabel: UILabel?
+    
+    private let profileService = ProfileService.shared
+    private let tokenStorage = OAuth2TokenStorage.shared
+    private let profileStorage = ProfileStorage()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -16,6 +25,8 @@ final class ProfileViewController: UIViewController {
         setupLoginNameLabel()
         setupDescriptionLabel()
         setupLogOutButton()
+        guard let profile = profileService.profile else { return }
+        self.updateProfileDetails(profile: profileService)
     }
     
     private func setupProfileImageView() {
@@ -89,6 +100,15 @@ final class ProfileViewController: UIViewController {
             logOutButton.widthAnchor.constraint(equalToConstant: 44),
             logOutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
+    }
+    
+    private func updateProfileDetails(profile: ProfileService) {
+        guard let nameLabel = nameLabel,
+              let loginNameLabel = loginNameLabel,
+              let descriptionLabel = descriptionLabel else { return }
+        nameLabel.text = profileService.profile?.name
+        loginNameLabel.text = profileService.profile?.loginName
+        descriptionLabel.text = profileService.profile?.bio
     }
     
     @objc

@@ -7,10 +7,19 @@
 
 import Foundation
 
+enum AuthServiceError: Error {
+    case invalidRequest
+}
+
 final class OAuth2Service {
     
     static let shared = OAuth2Service()
     private init() {}
+    
+    private let urlSession = URLSession.shared
+    
+    private var task: URLSessionTask?
+    private var lastCode: String?
     
     func makeOAuthTokenRequest(code: String?) ->URLRequest? {
         guard let code = code else {
@@ -30,7 +39,7 @@ final class OAuth2Service {
         ]
         
         guard let url = urlComponents.url(relativeTo: Constants.defaultBaseURL) else {
-            print("Failed to construct URL from components")
+            assertionFailure("Failed to construct URL from components")
             return nil
         }
         
@@ -40,12 +49,21 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(URLError(.badURL)))
+        assert(Thread.isMainThread)
+        guard lastCode != code else {
+            completion(.failure(AuthServiceError.invalidRequest))
             print("Authorization code is nil or failed to create URL")
             return
         }
+        task?.cancel()
+        lastCode = code
         
+        guard let request = makeOAuthTokenRequest(code: code)
+        else { DispatchQueue.main.async {
+            completion(.failure(AuthServiceError.invalidRequest))
+        }
+            return
+        }
         
         let task = URLSession.shared.data(for: request) { result in
             switch result {
@@ -62,7 +80,13 @@ final class OAuth2Service {
                 completion(.failure(error))
                 print("Failed to fetch OAuthToken")
             }
+            
+            self.task = nil
+            self.lastCode = nil
         }
+        
+        self.task = task
         task.resume()
     }
 }
+
