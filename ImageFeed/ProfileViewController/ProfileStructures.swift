@@ -17,7 +17,7 @@ struct ProfileResult: Codable {
     
     private enum CodingKeys: String, CodingKey {
         
-        case userName
+        case userName = "username"
         case firstName = "first_name"
         case lastName = "last_name"
         case bio
@@ -46,17 +46,7 @@ struct Profile {
     var username: String
     var name: String
     var loginName: String
-    var bio: String
+    var bio: String?
 }
 
-//extension Profile {
-//    init(result profile: Profile) {
-//        self.init(
-//            username: profile.userName,
-//            name: "\(profile.firstName ?? "") \(profile.lastName ?? "")",
-//            loginName: "@\(profile.userName)",
-//            bio: profile.bio ?? ""
-//        )
-//    }
-//}
 

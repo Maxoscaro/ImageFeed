@@ -25,7 +25,7 @@ final class SplashScreenViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let token = oauth2Service.getToken() {
-           
+            
             self.fetchProfile(token)
             
         } else {
@@ -36,7 +36,7 @@ final class SplashScreenViewController: UIViewController {
         }
     }
     
-  
+    
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
@@ -87,7 +87,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             switch result {
             case .success:
                 UIBlockingProgressHUD.dismiss()
-             
+                
             case .failure:
                 self.showAlert()
                 break
@@ -106,9 +106,9 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                 self.profileImageService.fetchProfileImageURL(username: username) { result in
                     switch result{
                     case .success:
-                        print("Линк загружен")
+                        print("Avatar recieved")
                     case .failure:
-                    
+                        
                         break
                     }}
                 self.switchToTabBarController()

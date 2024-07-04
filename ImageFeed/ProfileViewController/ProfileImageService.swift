@@ -35,11 +35,11 @@ final class ProfileImageService {
         
         let task = URLSession.shared.objectTask(for: request) {
             (result:
-                    Result<ProfileImageResponseBody, Error>) in
+                Result<ProfileImageResponseBody, Error>) in
             switch result {
                 
             case .success(let profileImages):
-                self.avatarURL = profileImages.profileImage.small
+                self.avatarURL = profileImages.profileImage.large
                 guard let avatarURL = self.avatarURL else { return }
                 DispatchQueue.main.async {
                     completion(.success(avatarURL))
@@ -48,7 +48,7 @@ final class ProfileImageService {
                         object: self,
                         userInfo: ["URL": avatarURL])
                 }
-                print("Profile received")
+                print("ProfileImageService.fetchProfileImageURL:Profile received")
             case .failure(let error):
                 DispatchQueue.main.async {
                     completion(.failure(error))
@@ -57,13 +57,13 @@ final class ProfileImageService {
                 }
                 switch error {
                 case NetworkError.httpStatusCode(let statusCode):
-                    print("HTTP Error: status-code \(statusCode)")
+                    print("ProfileImageService.fetchProfileImageURL.HTTP Error: status-code \(statusCode)")
                 case NetworkError.urlRequestError(let requestError):
-                    print("Request error: \(requestError.localizedDescription)")
+                    print("ProfileImageService.fetchProfileImageURL.Request error: \(requestError.localizedDescription)")
                 case NetworkError.urlSessionError:
-                    print("URLSession Error")
+                    print("ProfileImageService.fetchProfileImageURL.URLSession Error")
                 default:
-                    print("Unknown error: \(error.localizedDescription)")
+                    print("ProfileImageService.fetchProfileImageURL.Unknown error: \(error.localizedDescription)")
                 }
             }
             self.task = nil
@@ -74,7 +74,7 @@ final class ProfileImageService {
     
     private func makeProfileAvatarRequest(_ username: String) -> URLRequest? {
         
-        guard let url = URL(string: "https://api.unsplash.com/user/\(username)") else {
+        guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
             print("Invalid base URL")
             return nil
         }

@@ -12,6 +12,7 @@ final class ProfileService {
     private(set) var profile: Profile?
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
+    private let oauth2Service = OAuth2Service.shared
     
     static let shared = ProfileService()
     private init() {}
@@ -35,6 +36,7 @@ final class ProfileService {
                 DispatchQueue.main.async {
                     completion(.success(profile))
                 }
+                print("ProfileService.fetchProfile: профиль успешно загружен")
                 
             case .failure(let error):
                 DispatchQueue.main.async {
@@ -43,13 +45,13 @@ final class ProfileService {
                 }
                 switch error {
                 case NetworkError.httpStatusCode(let statusCode):
-                    print("HTTP Error: status-code \(statusCode)")
+                    print("ProfileService.fetchProfile.HTTP Error: status-code \(statusCode)")
                 case NetworkError.urlRequestError(let requestError):
-                    print("Request error: \(requestError.localizedDescription)")
+                    print("ProfileService.fetchProfile.Request error: \(requestError.localizedDescription)")
                 case NetworkError.urlSessionError:
-                    print("URLSession Error")
+                    print("ProfileService.fetchProfile.URLSession Error")
                 default:
-                    print("Unknown error: \(error.localizedDescription)")
+                    print("ProfileService.fetchProfile.Unknown error: \(error.localizedDescription)")
                 }
             }
             
@@ -59,13 +61,18 @@ final class ProfileService {
         task.resume()
     }
     
-    
     private func makeFetchProfileRequest(token: String) -> URLRequest? {
         
-        guard let url = URL(string: Constants.profileURLString) else { return nil }
+        guard let url = URL(string: Constants.profileURLString) else {
+            print("Invalid base URL")
+            return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        guard let token = oauth2Service.getToken()
+        else {
+            print("No token")
+            return nil}
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
