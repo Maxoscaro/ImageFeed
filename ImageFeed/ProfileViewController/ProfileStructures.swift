@@ -12,12 +12,12 @@ struct ProfileResult: Codable {
     let userName: String
     let firstName: String?
     let lastName: String?
-    let bio: String
+    let bio: String?
     
     
     private enum CodingKeys: String, CodingKey {
         
-        case userName = "username"
+        case userName
         case firstName = "first_name"
         case lastName = "last_name"
         case bio
@@ -31,6 +31,15 @@ struct ProfileResult: Codable {
             return .failure(error)
         }
     }
+    
+    func toProfile() -> Profile {
+        return Profile(
+            username: self.userName,
+            name: "\(self.firstName ?? "") \(self.lastName ?? "")",
+            loginName: "@\(self.userName)",
+            bio: self.bio ?? "empty"
+        )
+    }
 }
 struct Profile {
     
@@ -40,14 +49,14 @@ struct Profile {
     var bio: String
 }
 
-extension Profile {
-    init(result profile: ProfileResult) {
-        self.init(
-            username: profile.userName,
-            name: "\(profile.firstName ?? "") \(profile.lastName ?? "")",
-            loginName: "@\(profile.userName)",
-            bio: profile.bio
-        )
-    }
-}
+//extension Profile {
+//    init(result profile: Profile) {
+//        self.init(
+//            username: profile.userName,
+//            name: "\(profile.firstName ?? "") \(profile.lastName ?? "")",
+//            loginName: "@\(profile.userName)",
+//            bio: profile.bio ?? ""
+//        )
+//    }
+//}
 

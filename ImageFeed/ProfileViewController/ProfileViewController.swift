@@ -6,16 +6,20 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
     private var nameLabel: UILabel?
        private var loginNameLabel: UILabel?
        private var descriptionLabel: UILabel?
+    private var profileImageServiceObserver: NSObjectProtocol?
     
+    
+    private let imageView = UIImageView()
     private let profileService = ProfileService.shared
-    private let tokenStorage = OAuth2TokenStorage.shared
-    private let profileStorage = ProfileStorage()
+
+    //private let profileStorage = ProfileStorage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,8 +30,20 @@ final class ProfileViewController: UIViewController {
         setupDescriptionLabel()
         setupLogOutButton()
         guard let profile = profileService.profile else { return }
-        self.updateProfileDetails(profile: profileService)
-    }
+        self.updateProfileDetails(profile: profile)
+        
+        profileImageServiceObserver = NotificationCenter.default
+                   .addObserver(
+                       forName: ProfileImageService.didChangeNotification,
+                       object: nil,
+                       queue: .main
+                   ) { [weak self] _ in
+                       guard let self = self else { return }
+                       self.updateAvatar()
+                   }
+               updateAvatar()
+           }
+    
     
     private func setupProfileImageView() {
         let profileImage = UIImage(named: "avatar")
@@ -102,13 +118,26 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
-    private func updateProfileDetails(profile: ProfileService) {
-        guard let nameLabel = nameLabel,
-              let loginNameLabel = loginNameLabel,
-              let descriptionLabel = descriptionLabel else { return }
-        nameLabel.text = profileService.profile?.name
-        loginNameLabel.text = profileService.profile?.loginName
-        descriptionLabel.text = profileService.profile?.bio
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel?.text = profile.name
+        descriptionLabel?.text = profile.bio
+        loginNameLabel?.text = profile.loginName
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        imageView.kf.indicatorType = .activity
+        let processor = RoundCornerImageProcessor(cornerRadius: .greatestFiniteMagnitude)
+        imageView.kf.setImage(
+            with: url,
+        placeholder: UIImage(named: "placeholder.jpg"),
+            options: [.processor(processor)])
+
+        imageView.layer.cornerRadius = imageView.frame.size.width / 2
+        imageView.clipsToBounds = true
     }
     
     @objc

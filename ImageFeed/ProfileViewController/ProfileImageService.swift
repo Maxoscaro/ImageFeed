@@ -12,10 +12,11 @@ final class ProfileImageService {
     static let shared = ProfileImageService()
     private init() {}
     
+    private let oauth2Service = OAuth2Service.shared
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
-    private let oauth2TokenStorage = OAuth2TokenStorage()
-    private (set) var smallAvatarURL: String?
+    
+    private (set) var avatarURL: String?
     
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
@@ -32,29 +33,28 @@ final class ProfileImageService {
             return
         }
         
-        let task = URLSession.shared.data(for: request) { result in
+        let task = URLSession.shared.objectTask(for: request) {
+            (result:
+                    Result<ProfileImageResponseBody, Error>) in
             switch result {
-            case .success(let data):
-                let decodeResult = ProfileImageResponseBody.decodeUserAvatarResponse(from: data)
-                switch decodeResult {
-                case .success(let profileImages):
-                    self.smallAvatarURL = profileImages.small
-                    guard let smallAvatarURL = self.smallAvatarURL else { return }
-                    DispatchQueue.main.async {
-                        completion(.success(smallAvatarURL))
-                        NotificationCenter.default.post(
-                            name: ProfileImageService.didChangeNotification,
-                            object: self,
-                            userInfo: ["URL": smallAvatarURL])
-                    }
-                    print("Profile received")
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        completion(.failure(error))
-                    }
+                
+            case .success(let profileImages):
+                self.avatarURL = profileImages.profileImage.small
+                guard let avatarURL = self.avatarURL else { return }
+                DispatchQueue.main.async {
+                    completion(.success(avatarURL))
+                    NotificationCenter.default.post(
+                        name: ProfileImageService.didChangeNotification,
+                        object: self,
+                        userInfo: ["URL": avatarURL])
+                }
+                print("Profile received")
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                    
                     print("Error during profile decoding")
                 }
-            case .failure(let error):
                 switch error {
                 case NetworkError.httpStatusCode(let statusCode):
                     print("HTTP Error: status-code \(statusCode)")
@@ -81,7 +81,7 @@ final class ProfileImageService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        guard let token = oauth2TokenStorage.token
+        guard let token = oauth2Service.getToken()
         else {
             print("No token")
             return nil}

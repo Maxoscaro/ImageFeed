@@ -7,18 +7,18 @@
 
 import Foundation
 
-final class ProfileStorage{
-    private var profile = Profile(
-        username: "empty",
-        name: "empty",
-        loginName: "empty",
-        bio: "empty")
-    
-    func updateProfileData(profile: Profile){
-        self.profile = profile
-    }
-    
-    func getProfile() -> Profile{
-        return profile
-    }
-}
+//final class ProfileStorage{
+//    private var profile = Profile(
+//        username: "empty",
+//        name: "empty",
+//        loginName: "empty",
+//        bio: "empty")
+//    
+//    func updateProfileData(profile: Profile){
+//        self.profile = profile
+//    }
+//    
+//    func getProfile() -> Profile{
+//        return profile
+//    }
+//}

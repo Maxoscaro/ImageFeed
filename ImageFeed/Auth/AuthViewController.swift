@@ -10,6 +10,7 @@ import ProgressHUD
 
 protocol AuthViewControllerDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String)
+    func authViewController(_ vc: AuthViewController)
 }
 
 final class AuthViewController: UIViewController {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftKeychainWrapper
 
 enum AuthServiceError: Error {
     case invalidRequest
@@ -51,11 +52,11 @@ final class OAuth2Service {
     func fetchOAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         guard lastCode != code else {
+            task?.cancel()
             completion(.failure(AuthServiceError.invalidRequest))
             print("Authorization code is nil or failed to create URL")
             return
         }
-        task?.cancel()
         lastCode = code
         
         guard let request = makeOAuthTokenRequest(code: code)
@@ -65,20 +66,36 @@ final class OAuth2Service {
             return
         }
         
-        let task = URLSession.shared.data(for: request) { result in
+        let task = urlSession.objectTask(for: request) { (result:
+            Result<OAuthTokenResponseBody, Error>) in
             switch result {
-            case .success(let data):
-                do {
-                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    OAuth2TokenStorage.shared.token = tokenResponse.accessToken
-                    completion(.success(tokenResponse.accessToken))
-                } catch {
-                    completion(.failure(error))
-                    print("Failed to decode OAuthTokenResponseBody")
+            case .success(let tokenResponse):
+            
+                let token = tokenResponse.accessToken 
+                let isSuccess = KeychainWrapper.standard.set(token, forKey: "Auth token")
+                guard isSuccess else {
+                    print("OAuth2Service.fetchOAuthToken: токен не записан в KeyChain")
+                    return
                 }
+                DispatchQueue.main.async {
+                    completion(.success(token))
+                }
+                print("OAuth2Service.fetchOAuthToken: OAuth токен получен: \(token)")
             case .failure(let error):
-                completion(.failure(error))
-                print("Failed to fetch OAuthToken")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                switch error {
+                case NetworkError.httpStatusCode(let statusCode):
+                    print("OAuth2Service.fetchOAuthToken. HTTP Error: status-code \(statusCode)")
+                case NetworkError.urlRequestError(let requestError):
+                    print("OAuth2Service.fetchOAuthToken. Request error: \(requestError.localizedDescription)")
+                case NetworkError.urlSessionError:
+                    print("OAuth2Service.fetchOAuthToken. URLSession Error")
+                default:
+                    print("OAuth2Service.fetchOAuthToken. Unknown error: \(error.localizedDescription)")
+                }
+                print("OAuth2Service.fetchOAuthToken. Ошибка при декодировании токена")
             }
             
             self.task = nil
@@ -88,5 +105,16 @@ final class OAuth2Service {
         self.task = task
         task.resume()
     }
+    
+    func getToken() -> String? {
+        let token: String? = KeychainWrapper.standard.string(forKey: "Auth token")
+        return token
+    }
+    
+    func clearToken() {
+//        guard KeychainWrapper.standard.string(forKey: "Auth token") != nil else { return }
+        KeychainWrapper.standard.removeObject(forKey: "Auth token")
+    }
+    
 }
 
