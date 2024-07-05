@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import ProgressHUD
 
 protocol AuthViewControllerDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController, didAuthenticateWithCode code: String)
+    func authViewController(_ vc: AuthViewController)
 }
 
 final class AuthViewController: UIViewController {
@@ -31,18 +33,23 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-      
+        
+        UIBlockingProgressHUD.show()
+        
         OAuth2Service.shared.fetchOAuthToken(with: code) { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success:
-                    self.delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
-                    case .failure(let error):
-                    print("Ошибка при получении OAuth токена: \(error.localizedDescription)")
-                  
-                }
+            guard let self = self else { return }
+            
+            UIBlockingProgressHUD.dismiss()
+            
+            switch result {
+            case .success:
+                self.delegate?.didAuthenticate(self, didAuthenticateWithCode: code)
+            case .failure(let error):
+                print("Ошибка при получении OAuth токена: \(error.localizedDescription)")
+                
             }
         }
+    }
     
     func webViewViewControllerdidCancel(_ vc: WebViewViewController) {
         dismiss(animated: true)

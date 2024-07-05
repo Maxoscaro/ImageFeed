@@ -11,6 +11,7 @@ enum NetworkError: Error {
     case httpStatusCode(Int)
     case urlRequestError(Error)
     case urlSessionError
+    case invalidRequest
 }
 
 extension URLSession {
@@ -28,16 +29,17 @@ extension URLSession {
             if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
                 if 200 ..< 300 ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
+                    print("URLSession.data: данные загружены успешно")
                 } else {
                     fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
-                    print("HTTP Error: \(String(describing: error))")
+                    print("URLSession.data.HTTP Error: \(String(describing: error))")
                 }
-            } else if let error = error { // Блок для обработки ошибок
+            } else if let error = error {
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
-                print("URLRequest Error: \(error)")
+                print("URLSession.data.URLRequest Error: \(error)")
             } else {
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
-                print("URLSession Error")
+                print("URLSession.data.URLSession Error")
             }
         })
         
