@@ -13,7 +13,8 @@ final class SplashScreenViewController: UIViewController {
     private let splashImage = UIImage(named: "Logo_of_Unsplash")
     
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-    private let oauth2Service = OAuth2Service.shared
+    private let oauth2Service = OAuth2TokenStorage.shared
+    private let oauthService = OAuth2Service.shared
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
     
@@ -24,7 +25,7 @@ final class SplashScreenViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let token = oauth2Service.getToken() {
+        if let token = oauth2Service.token {
             
             self.fetchProfile(token)
             
@@ -66,7 +67,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController) {
         vc.dismiss(animated: true)
         
-        guard let token = oauth2Service.getToken() else { return }
+        guard let token = oauth2Service.token else { return }
         self.fetchProfile(token)
         
         self.switchToTabBarController()
@@ -82,7 +83,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
     }
     
     private func fetchOAuthToken(_ code: String) {
-        oauth2Service.fetchOAuthToken(with: code) { [weak self] result in
+        oauthService.fetchOAuthToken(with: code) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success:

@@ -12,7 +12,7 @@ final class ProfileService {
     private(set) var profile: Profile?
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
-    private let oauth2Service = OAuth2Service.shared
+    private let oauth2Service = OAuth2TokenStorage.shared
     
     static let shared = ProfileService()
     private init() {}
@@ -69,7 +69,7 @@ final class ProfileService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        guard let token = oauth2Service.getToken()
+        guard let token = oauth2Service.token
         else {
             print("No token")
             return nil}

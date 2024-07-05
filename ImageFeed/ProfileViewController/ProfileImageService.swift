@@ -12,7 +12,7 @@ final class ProfileImageService {
     static let shared = ProfileImageService()
     private init() {}
     
-    private let oauth2Service = OAuth2Service.shared
+    private let oauth2Service = OAuth2TokenStorage.shared
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     
@@ -81,7 +81,7 @@ final class ProfileImageService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        guard let token = oauth2Service.getToken()
+        guard let token = oauth2Service.token
         else {
             print("No token")
             return nil}

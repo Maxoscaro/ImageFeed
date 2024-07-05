@@ -22,16 +22,7 @@ struct ProfileResult: Codable {
         case lastName = "last_name"
         case bio
     }
-    
-    static func decodeProfileResponse(from data: Data) -> Result<ProfileResult, Error> {
-        do {
-            let response = try JSONDecoder().decode(ProfileResult.self, from: data)
-            return .success(response)
-        } catch {
-            return .failure(error)
-        }
-    }
-    
+
     func toProfile() -> Profile {
         return Profile(
             username: self.userName,

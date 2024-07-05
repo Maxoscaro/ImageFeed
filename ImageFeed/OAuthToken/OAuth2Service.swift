@@ -17,9 +17,11 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     
+    
     private var task: URLSessionTask?
     private var lastCode: String?
     private let urlSession = URLSession.shared
+    private let tokenStorage = OAuth2TokenStorage.shared
     
     func makeOAuthTokenRequest(code: String?) ->URLRequest? {
         guard let code = code else {
@@ -58,8 +60,8 @@ final class OAuth2Service {
         }
         lastCode = code
         
-        guard let request = makeOAuthTokenRequest(code: code)
-        else { DispatchQueue.main.async {
+        guard let request = makeOAuthTokenRequest(code: code) else {
+            DispatchQueue.main.async {
             completion(.failure(AuthServiceError.invalidRequest))
         }
             return
@@ -71,6 +73,7 @@ final class OAuth2Service {
             case .success(let tokenResponse):
                 
                 let token = tokenResponse.accessToken
+                self.tokenStorage.token = token
                 let isSuccess = KeychainWrapper.standard.set(token, forKey: "Auth token")
                 guard isSuccess else {
                     print("OAuth2Service.fetchOAuthToken: токен не записан в KeyChain")
@@ -105,15 +108,7 @@ final class OAuth2Service {
         task.resume()
     }
     
-    func getToken() -> String? {
-        let token: String? = KeychainWrapper.standard.string(forKey: "Auth token")
-        return token
-    }
-    
-    func clearToken() {
-        guard KeychainWrapper.standard.string(forKey: "Auth token") != nil else { return }
-        KeychainWrapper.standard.removeObject(forKey: "Auth token")
-    }
+  
     
 }
 
