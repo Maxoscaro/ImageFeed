@@ -105,15 +105,10 @@ final class ImagesListService {
                     switch result {
                     case .success:
                         if let index = self?.photos.firstIndex(where: { $0.id == photoId }) {
-                            self?.photos[index].isLiked = !isLike
+                            self?.photos[index].isLiked = isLike
                             NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
                         }
                         completion(.success(()))
-                        NotificationCenter.default.post(
-                            name: ImagesListService.didChangeNotification,
-                            object: self,
-                            userInfo: [:]
-                        )
                         print("ImagesListService.changeLike: Лайк изменен")
                         
                     case .failure(let error):

@@ -23,7 +23,7 @@ struct PhotoResult: Codable {
     let description: String?
     let urls: UrlsResult
     
-    private enum CodingKeys: String, CodingKey {
+     enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"
         case width

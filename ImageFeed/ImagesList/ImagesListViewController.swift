@@ -126,7 +126,7 @@ extension ImagesListViewController {
                 print("ImagesListViewController.configCell: Загрузка фото завершена")
             case .failure(let error):
                 ProgressHUD.dismiss()
-                print("ImagesListViewController.configCell: Загрузка фото НЕ завершена. Код \(error)")
+                print("ImagesListViewController.configCell: Загрузка фото не завершена. Код \(error)")
             }
         }
         
@@ -198,20 +198,19 @@ extension ImagesListViewController: ImagesListCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
             let photo = photos[indexPath.row]
         
-        //cell.setIsLiked(isLiked: !photo.isLiked)
+        cell.setIsLiked(isLiked: !photo.isLiked)
         UIBlockingProgressHUD.show()
         
         imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) { [weak self] result in
             guard let self = self else { return }
             switch result{
             case .success():
-                
-                self.photos = self.imagesListService.photos
-                cell.setIsLiked(isLiked: !photo.isLiked)
                 print("ImagesListViewController: Лайк изменен")
+                self.photos = self.imagesListService.photos
                 UIBlockingProgressHUD.dismiss()
+                
             case .failure(let error):
-                print("ImagesListViewController: Лайк НЕ изменен - \(error)")
+                print("ImagesListViewController: Лайк не изменен - \(error)")
                 cell.setIsLiked(isLiked: photo.isLiked)
                 UIBlockingProgressHUD.dismiss()
                 self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ок")
