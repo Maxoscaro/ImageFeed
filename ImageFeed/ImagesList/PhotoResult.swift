@@ -34,6 +34,7 @@ struct PhotoResult: Codable {
     }
 }
 
-struct LikePhotoresult: Decodable {
+struct LikePhotoResult: Decodable {
     let photo: PhotoResult?
 }
+

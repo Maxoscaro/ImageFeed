@@ -17,6 +17,7 @@ final class SplashScreenViewController: UIViewController {
     private let oauthService = OAuth2Service.shared
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
+    private let alertService = AlertService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,7 +91,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                 UIBlockingProgressHUD.dismiss()
                 
             case .failure:
-                self.showAlert()
+                self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ok")
                 break
             }
         }
@@ -114,7 +115,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                     }}
                 self.switchToTabBarController()
             case .failure:
-                self.showAlert()
+                self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ok")
                 break
             }
         }
@@ -126,22 +127,10 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .success:
                 print("Успешно загружен аватар")
             case .failure:
-                self.showAlert()
+                self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ok")
                 break
             }
         }
-    }
-    
-    private func showAlert() {
-        
-        let alertController = UIAlertController(title: "Ошибка", message: "Что-то пошло не так", preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "Ok", style: .default) { _ in
-            alertController.dismiss(animated: true, completion: nil)
-            print("Ok button tapped")
-        }
-        alertController.addAction(action)
-        present(alertController, animated: true, completion: nil)
     }
 }
 

@@ -9,13 +9,21 @@ import UIKit
 
 final class SingleImageViewController: UIViewController {
     
+    var imageURL: URL? {
+        didSet {
+            guard isViewLoaded else { return }
+            self.setImage()
+        }
+    }
+    
+    
     var image: UIImage? {
         didSet {
             guard isViewLoaded, let image else { return }
             
             imageView.image = image
             imageView.frame.size = image.size
-            rescaleAndCenterImageInScrollView(image: image)
+           // rescaleAndCenterImageInScrollView(image: image)
         }
     }
     
@@ -39,10 +47,8 @@ final class SingleImageViewController: UIViewController {
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
+        setImage()
+        //rescaleAndCenterImageInScrollView(image: image)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -69,6 +75,26 @@ final class SingleImageViewController: UIViewController {
         let x = imageViewSize.width < scrollViewSize.width ? (scrollViewSize.width - imageViewSize.width) / 2 : 0
         let y = imageViewSize.height < scrollViewSize.height ? (scrollViewSize.height - imageViewSize.height) / 2 : 0
         scrollView.contentInset = UIEdgeInsets(top: y, left: x, bottom: y, right: x)
+    }
+    
+    private func setImage() {
+        UIBlockingProgressHUD.show()
+        guard let imageURL = imageURL else { return }
+        imageView.kf.setImage(with: imageURL) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            switch result {
+            case .success(let photo):
+                guard let self = self else { return }
+                self.image = self.imageView.image
+                guard let image = image else { return }
+                imageView.frame.size = image.size
+                rescaleAndCenterImageInScrollView(image: image)
+                print("Ok")
+            case .failure(let error):
+                print(error)
+                //guard let self = self else { return }
+            }
+        }
     }
 }
 

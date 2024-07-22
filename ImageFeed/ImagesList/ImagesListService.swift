@@ -45,27 +45,89 @@ final class ImagesListService {
                     self?.currentPage -= 1
                 }
             }
-                
-            }
             
-            task.resume()
         }
+        
+        task.resume()
+    }
     
     private func makeFetchPhotosRequest(nextPage: Int) -> URLRequest? {
-            guard let url = URL(string: Constants.defaultPhotos + "?page=\(nextPage)"),
-                  let token = tokenStorage.token else {
-                return nil
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            return request
+        guard let url = URL(string: Constants.defaultPhotos + "?page=\(nextPage)"),
+              let token = tokenStorage.token else {
+            return nil
         }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return request
+    }
     
     private func handleSuccess(photoResult: [PhotoResult]) {
         let newPhotos = photoResult.map { Photo(from: $0) }
         photos.append(contentsOf: newPhotos)
         NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
     }
-}
+    
+    private func makeChangeLikeRequest(photoId: String, isLike: Bool) -> URLRequest? {
+        guard let url = URL(string: Constants.defaultPhotos + "\(photoId)/like"),
+              let token = tokenStorage.token else {
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = isLike ? "POST" : "DELETE"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return request
+    }
+        func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+            task?.cancel()
+            
+            if task != nil {
+                completion(.failure(NetworkError.urlSessionError))
+                print("ImagesListService.changeLike: запрос уже выполняется")
+                return
+            }
+            
+            
+            guard let request = makeChangeLikeRequest(photoId: photoId, isLike: isLike) else {
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.urlSessionError))
+                }
+                print("ImagesListService.changeLike: сессия прервана")
+                self.task = nil
+                return
+            }
+            
+            let task = urlSession.objectTask(for: request) { [weak self] (result:
+                Result<LikePhotoResult, Error>) in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success:
+                        if let index = self?.photos.firstIndex(where: { $0.id == photoId }) {
+                            self?.photos[index].isLiked = !isLike
+                            NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
+                        }
+                        completion(.success(()))
+                        NotificationCenter.default.post(
+                            name: ImagesListService.didChangeNotification,
+                            object: self,
+                            userInfo: [:]
+                        )
+                        print("ImagesListService.changeLike: Лайк изменен")
+                        
+                    case .failure(let error):
+                        print("ImagesListService.changeLike: \(error.localizedDescription)")
+                        completion(.failure(error))
+                        
+                    }
+                    }
+               
+                }
+                self.task = task
+                
+                task.resume()
+            }
+        }
+    
+
