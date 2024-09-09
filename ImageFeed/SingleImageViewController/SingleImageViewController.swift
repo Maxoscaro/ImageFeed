@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
@@ -16,16 +17,17 @@ final class SingleImageViewController: UIViewController {
         }
     }
     
-    
     var image: UIImage? {
         didSet {
             guard isViewLoaded, let image else { return }
             
             imageView.image = image
             imageView.frame.size = image.size
-           // rescaleAndCenterImageInScrollView(image: image)
+            rescaleAndCenterImageInScrollView(image: image)
         }
     }
+    
+    private let alertService = AlertService.shared
     
     @IBOutlet weak var imageView: UIImageView!
     
@@ -35,7 +37,9 @@ final class SingleImageViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     @IBAction func didTapShareButton(_ sender: Any) {
-        guard let image else { return }
+        guard let image else {
+            assertionFailure("Не удалось поделиться изображением")
+            return }
         let share = UIActivityViewController(
             activityItems:[image],
             applicationActivities: nil)
@@ -44,11 +48,11 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        alertService.singleImageViewDelegate = self
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
         setImage()
-        //rescaleAndCenterImageInScrollView(image: image)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -72,12 +76,12 @@ final class SingleImageViewController: UIViewController {
     private func centerImage() {
         let scrollViewSize = scrollView.bounds.size
         let imageViewSize = imageView.frame.size
-        let x = imageViewSize.width < scrollViewSize.width ? (scrollViewSize.width - imageViewSize.width) / 2 : 0
-        let y = imageViewSize.height < scrollViewSize.height ? (scrollViewSize.height - imageViewSize.height) / 2 : 0
+        let x = (scrollViewSize.width - imageViewSize.width) / 2
+        let y = (scrollViewSize.height - imageViewSize.height) / 2
         scrollView.contentInset = UIEdgeInsets(top: y, left: x, bottom: y, right: x)
     }
     
-    private func setImage() {
+    func setImage() {
         UIBlockingProgressHUD.show()
         guard let imageURL = imageURL else { return }
         imageView.kf.setImage(with: imageURL) { [weak self] result in
@@ -89,10 +93,11 @@ final class SingleImageViewController: UIViewController {
                 guard let image = image else { return }
                 imageView.frame.size = image.size
                 rescaleAndCenterImageInScrollView(image: image)
-                print("Ok")
+                
             case .failure(let error):
                 print(error)
-                //guard let self = self else { return }
+                guard let self = self else { return }
+                self.alertService.showAlert(title: "Ошибка", message: "Изображение не загружено", buttonRetryTitle: "Повторить", buttonCloseTitle: "Пропустить")
             }
         }
     }

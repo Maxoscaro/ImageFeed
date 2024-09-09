@@ -61,6 +61,10 @@ final class ProfileService {
         task.resume()
     }
     
+    func cleanProfile() {
+        self.profile = Profile(username: "", name: "", loginName: "", bio: "")
+    }
+    
     private func makeFetchProfileRequest(token: String) -> URLRequest? {
         
         guard let url = URL(string: Constants.profileURLString) else {

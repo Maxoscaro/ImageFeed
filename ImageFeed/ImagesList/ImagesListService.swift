@@ -34,8 +34,7 @@ final class ImagesListService {
         
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
             DispatchQueue.main.async {
-                
-                
+            
                 self?.isFetching = false
                 
                 switch result {
@@ -49,6 +48,53 @@ final class ImagesListService {
         }
         
         task.resume()
+    }
+    
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) { assert(Thread.isMainThread)
+        task?.cancel()
+        
+        guard task == nil else {
+            completion(.failure(NetworkError.urlSessionError))
+            print("ImagesListService.changeLike: запрос уже выполняется")
+            return
+        }
+        
+        guard let request = makeChangeLikeRequest(photoId: photoId, isLike: isLike) else {
+            DispatchQueue.main.async {
+                completion(.failure(NetworkError.urlSessionError))
+            }
+            print("ImagesListService.changeLike: сессия прервана")
+            self.task = nil
+            return
+        }
+        
+        let task = urlSession.objectTask(for: request) { [weak self] (result:
+                                                                        Result<LikePhotoResult, Error>) in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                        self.photos[index].isLiked = isLike
+                        NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
+                    }
+                    completion(.success(()))
+                    print("ImagesListService.changeLike: Лайк изменен")
+                    
+                case .failure(let error):
+                    print("ImagesListService.changeLike: \(error.localizedDescription)")
+                    completion(.failure(error))
+                }
+                self.task = nil
+            }
+        }
+        self.task = task
+        task.resume()
+    }
+    
+    func cleanPhotosList(){
+        photos = []
+        currentPage = 0
     }
     
     private func makeFetchPhotosRequest(nextPage: Int) -> URLRequest? {
@@ -80,49 +126,6 @@ final class ImagesListService {
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
-        func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
-            task?.cancel()
-            
-            if task != nil {
-                completion(.failure(NetworkError.urlSessionError))
-                print("ImagesListService.changeLike: запрос уже выполняется")
-                return
-            }
-            
-            
-            guard let request = makeChangeLikeRequest(photoId: photoId, isLike: isLike) else {
-                DispatchQueue.main.async {
-                    completion(.failure(NetworkError.urlSessionError))
-                }
-                print("ImagesListService.changeLike: сессия прервана")
-                self.task = nil
-                return
-            }
-            
-            let task = urlSession.objectTask(for: request) { [weak self] (result:
-                Result<LikePhotoResult, Error>) in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        if let index = self?.photos.firstIndex(where: { $0.id == photoId }) {
-                            self?.photos[index].isLiked = isLike
-                            NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
-                        }
-                        completion(.success(()))
-                        print("ImagesListService.changeLike: Лайк изменен")
-                        
-                    case .failure(let error):
-                        print("ImagesListService.changeLike: \(error.localizedDescription)")
-                        completion(.failure(error))
-                        
-                    }
-                    }
-               
-                }
-                self.task = task
-                
-                task.resume()
-            }
-        }
-    
+}
+
 

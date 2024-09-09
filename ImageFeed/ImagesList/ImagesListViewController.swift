@@ -53,7 +53,7 @@ class ImagesListViewController: UIViewController {
                 return
             }
             let imageURL = URL(string: photos[indexPath.row].largeImageURL)
-                        viewController.imageURL = imageURL
+            viewController.imageURL = imageURL
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -79,7 +79,7 @@ class ImagesListViewController: UIViewController {
         photos = imagesListService.photos
         
         if oldCount != newCount {
-                tableView.performBatchUpdates {
+            tableView.performBatchUpdates {
                 let indexPaths = (oldCount..<newCount).map { i in
                     IndexPath(row: i, section: 0)
                 }
@@ -100,6 +100,7 @@ extension ImagesListViewController: UITableViewDataSource {
         guard let imagesListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
+        imagesListCell.delegate = self
         configCell(for: imagesListCell, with: indexPath)
         return imagesListCell
     }
@@ -112,7 +113,6 @@ extension ImagesListViewController {
         let imageIndex = photos[indexPath.row]
         let imageURLString = imageIndex.thumbImageURL
         let imageURL = URL(string: imageURLString)
-        
         let placeholderImage = UIImage(named: "photo_stub")
         
         cell.cellImage.kf.indicatorType = .activity
@@ -167,8 +167,8 @@ extension ImagesListViewController {
         
         return placeholderImage ?? UIImage()
     }
-    
 }
+
 extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -178,7 +178,6 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         let imageIndex = photos[indexPath.row]
-        
         let imageInserts = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInserts.left - imageInserts.right
         let imageWidth = imageIndex.size.width
@@ -196,22 +195,21 @@ extension ImagesListViewController: UITableViewDelegate {
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-            let photo = photos[indexPath.row]
+        let photo = photos[indexPath.row]
         
-        cell.setIsLiked(isLiked: !photo.isLiked)
         UIBlockingProgressHUD.show()
         
-        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) { [weak self] result in
+        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
             guard let self = self else { return }
             switch result{
             case .success():
-                print("ImagesListViewController: Лайк изменен")
                 self.photos = self.imagesListService.photos
+                cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
+                print("ImagesListViewController: Лайк изменен")
                 UIBlockingProgressHUD.dismiss()
                 
             case .failure(let error):
                 print("ImagesListViewController: Лайк не изменен - \(error)")
-                cell.setIsLiked(isLiked: photo.isLiked)
                 UIBlockingProgressHUD.dismiss()
                 self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ок")
             }

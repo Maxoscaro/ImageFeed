@@ -32,6 +32,7 @@ struct ProfileResult: Codable {
         )
     }
 }
+
 struct Profile {
     
     var username: String

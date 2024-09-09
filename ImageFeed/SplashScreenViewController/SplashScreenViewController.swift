@@ -11,7 +11,6 @@ final class SplashScreenViewController: UIViewController {
     
     private var splashImageView = UIImageView()
     private let splashImage = UIImage(named: "Logo_of_Unsplash")
-    
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let oauth2Service = OAuth2TokenStorage.shared
     private let oauthService = OAuth2Service.shared
@@ -37,8 +36,6 @@ final class SplashScreenViewController: UIViewController {
             present(authViewController, animated: true)
         }
     }
-    
-    
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {

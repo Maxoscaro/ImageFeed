@@ -19,10 +19,14 @@ final class ProfileViewController: UIViewController {
     private let profileImage = UIImage(named: "avatar")
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
+    private let alertService = AlertService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        alertService.profileViewControllerDelegate = self
         self.setupProfileImageView()
         self.setupNameLabel()
         self.setupLoginNameLabel()
@@ -41,6 +45,19 @@ final class ProfileViewController: UIViewController {
                 self.updateAvatar()
             }
         updateAvatar()
+    }
+    
+    @IBAction private func didTapLogOutButton(_ sender: UIButton) {
+        alertService.showAlert(title: "Пока, пока", message: "Уверены, что хотите выйти?", buttonConfirmTitle: "Да", buttonDeclineTitle: "Нет")
+    }
+    
+    func logout(){
+        UIBlockingProgressHUD.show()
+        profileLogoutService.logout()
+        let splashViewCotroller = SplashScreenViewController()
+        splashViewCotroller.modalPresentationStyle = .fullScreen
+        self.present(splashViewCotroller, animated: true, completion: nil)
+        UIBlockingProgressHUD.dismiss()
     }
     
     private func setupProfileImageView() {
@@ -141,9 +158,5 @@ final class ProfileViewController: UIViewController {
         profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
         profileImageView.clipsToBounds = true
         }
-    
-    @objc
-    private func didTapLogOutButton() {
-    }
 }
 

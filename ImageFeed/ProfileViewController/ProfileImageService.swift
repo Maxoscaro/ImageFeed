@@ -72,6 +72,10 @@ final class ProfileImageService {
         task.resume()
     }
     
+    func cleanProfilePhoto(){
+        self.avatarURL = ""
+    }
+    
     private func makeProfileAvatarRequest(_ username: String) -> URLRequest? {
         
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
