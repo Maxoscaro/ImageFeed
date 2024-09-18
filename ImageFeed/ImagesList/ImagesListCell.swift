@@ -18,14 +18,14 @@ final class ImagesListCell: UITableViewCell {
     
     @IBOutlet weak var dateLabel: UILabel!
     
+    @IBAction private func likeButtonClicked(_ sender: UIButton) {
+        delegate?.imageListCellDidTapLike(self)
+        print("Like tapped")
+    }
+    
     func setIsLiked(isLiked: Bool){
         let likeImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
         likeButton.setImage(likeImage, for: .normal)
        
-    }
-    
-    @IBAction private func likeButtonClicked(_ sender: UIButton) {
-        delegate?.imageListCellDidTapLike(self)
-        print("Like tapped")
     }
 }

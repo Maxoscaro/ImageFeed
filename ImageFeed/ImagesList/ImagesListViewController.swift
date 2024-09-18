@@ -59,6 +59,8 @@ class ImagesListViewController: UIViewController {
         }
     }
     
+    //MARK: - Private Methods
+    
     private func addImageListObserver() {
         NotificationCenter.default.addObserver(
             forName: ImagesListService.didChangeNotification,
@@ -89,6 +91,8 @@ class ImagesListViewController: UIViewController {
     }
 }
 
+//MARK: - Extensions
+
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photos.count
@@ -96,6 +100,7 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
+        cell.selectionStyle = .none
         
         guard let imagesListCell = cell as? ImagesListCell else {
             return UITableViewCell()
@@ -118,16 +123,15 @@ extension ImagesListViewController {
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.cancelDownloadTask()
         cell.cellImage.kf.setImage(with: imageURL, placeholder: placeholderImage, options: nil)
-        { completion in
+        { [weak self] completion in
             switch completion {
             case .success(_):
-                self.tableView.reloadRows(at: [indexPath], with: .automatic)
-                ProgressHUD.dismiss()
+                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
                 print("ImagesListViewController.configCell: Загрузка фото завершена")
             case .failure(let error):
-                ProgressHUD.dismiss()
                 print("ImagesListViewController.configCell: Загрузка фото не завершена. Код \(error)")
             }
+            ProgressHUD.dismiss()
         }
         
         let isLiked = imageIndex.isLiked
@@ -173,6 +177,7 @@ extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
+    
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -206,13 +211,12 @@ extension ImagesListViewController: ImagesListCellDelegate {
                 self.photos = self.imagesListService.photos
                 cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
                 print("ImagesListViewController: Лайк изменен")
-                UIBlockingProgressHUD.dismiss()
-                
+            
             case .failure(let error):
                 print("ImagesListViewController: Лайк не изменен - \(error)")
-                UIBlockingProgressHUD.dismiss()
                 self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ок")
             }
         }
+        UIBlockingProgressHUD.dismiss()
     }
 }

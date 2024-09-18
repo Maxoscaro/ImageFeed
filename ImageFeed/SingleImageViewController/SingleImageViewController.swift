@@ -29,14 +29,15 @@ final class SingleImageViewController: UIViewController {
     
     private let alertService = AlertService.shared
     
-    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet private  weak var imageView: UIImageView!
     
-    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet private weak var scrollView: UIScrollView!
     
-    @IBAction func didTapBackButton(_ sender: Any) {
+    @IBAction private func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
-    @IBAction func didTapShareButton(_ sender: Any) {
+    
+    @IBAction private func didTapShareButton(_ sender: Any) {
         guard let image else {
             assertionFailure("Не удалось поделиться изображением")
             return }
@@ -59,6 +60,29 @@ final class SingleImageViewController: UIViewController {
         return .lightContent
     }
     
+    func setImage() {
+        UIBlockingProgressHUD.show()
+        guard let imageURL = imageURL else { return }
+        imageView.kf.setImage(with: imageURL) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            switch result {
+            case .success(let photo):
+                guard let self = self else { return }
+                self.image = self.imageView.image
+                guard let image = image else { return }
+                imageView.frame.size = image.size
+                rescaleAndCenterImageInScrollView(image: image)
+                
+            case .failure(let error):
+                print(error)
+                guard let self = self else { return }
+                self.alertService.showAlert(title: "Ошибка", message: "Изображение не загружено", buttonRetryTitle: "Повторить", buttonCloseTitle: "Пропустить")
+            }
+        }
+    }
+    
+    //MARK: - Private Methods
+    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
@@ -80,28 +104,9 @@ final class SingleImageViewController: UIViewController {
         let y = (scrollViewSize.height - imageViewSize.height) / 2
         scrollView.contentInset = UIEdgeInsets(top: y, left: x, bottom: y, right: x)
     }
-    
-    func setImage() {
-        UIBlockingProgressHUD.show()
-        guard let imageURL = imageURL else { return }
-        imageView.kf.setImage(with: imageURL) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
-            switch result {
-            case .success(let photo):
-                guard let self = self else { return }
-                self.image = self.imageView.image
-                guard let image = image else { return }
-                imageView.frame.size = image.size
-                rescaleAndCenterImageInScrollView(image: image)
-                
-            case .failure(let error):
-                print(error)
-                guard let self = self else { return }
-                self.alertService.showAlert(title: "Ошибка", message: "Изображение не загружено", buttonRetryTitle: "Повторить", buttonCloseTitle: "Пропустить")
-            }
-        }
-    }
 }
+
+//MARK: - Extensions
 
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {

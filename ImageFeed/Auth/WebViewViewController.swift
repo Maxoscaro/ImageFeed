@@ -20,7 +20,7 @@ final class WebViewViewController: UIViewController {
     private var estimatedProgressObservation: NSKeyValueObservation?
     
     enum WebViewConstants {
-        static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+        static let unsplashAuthorizeURLString = Constants.authorizeURL
     }
     weak var delegate: WebViewViewControllerDelegate?
     

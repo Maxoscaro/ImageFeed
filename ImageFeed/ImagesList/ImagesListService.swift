@@ -21,6 +21,8 @@ final class ImagesListService {
     private var currentPage = 0
     private var task: URLSessionTask?
     
+    //MARK: - Public Methods
+    
     func fetchPhotosNextPage() {
         guard !isFetching else { return }
         
@@ -96,6 +98,8 @@ final class ImagesListService {
         photos = []
         currentPage = 0
     }
+    
+    //MARK: - Private Methods
     
     private func makeFetchPhotosRequest(nextPage: Int) -> URLRequest? {
         guard let url = URL(string: Constants.defaultPhotos + "?page=\(nextPage)"),

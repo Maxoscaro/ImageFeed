@@ -18,7 +18,6 @@ final class ProfileLogoutService{
     private let profileImageService = ProfileImageService.shared
     private let imageListService = ImagesListService.shared
     
-    
     func logout() {
         cleanCookies()
         cleanKFCache()
@@ -26,6 +25,8 @@ final class ProfileLogoutService{
         cleanProfile()
         cleanPhotosList()
     }
+    
+    //MARK: - Private Methods
     
     private func cleanCookies() {
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
@@ -35,6 +36,7 @@ final class ProfileLogoutService{
             }
         }
     }
+    
     private func cleanKFCache() {
         ImageCache.default.clearMemoryCache()
         ImageCache.default.clearDiskCache {

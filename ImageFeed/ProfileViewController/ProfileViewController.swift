@@ -47,6 +47,8 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
+    //MARK: - Private Methods
+    
     @IBAction private func didTapLogOutButton(_ sender: UIButton) {
         alertService.showAlert(title: "Пока, пока", message: "Уверены, что хотите выйти?", buttonConfirmTitle: "Да", buttonDeclineTitle: "Нет")
     }
