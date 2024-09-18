@@ -11,12 +11,12 @@ final class SplashScreenViewController: UIViewController {
     
     private var splashImageView = UIImageView()
     private let splashImage = UIImage(named: "Logo_of_Unsplash")
-    
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let oauth2Service = OAuth2TokenStorage.shared
     private let oauthService = OAuth2Service.shared
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
+    private let alertService = AlertService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +37,7 @@ final class SplashScreenViewController: UIViewController {
         }
     }
     
-    
+    //MARK: - Private Methods
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
@@ -49,6 +49,7 @@ final class SplashScreenViewController: UIViewController {
         
         window.rootViewController = tabBarController
     }
+    
     private func setupSplashImageView(){
         let imageView = UIImageView(image: splashImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -62,6 +63,8 @@ final class SplashScreenViewController: UIViewController {
         self.splashImageView = imageView
     }
 }
+
+//MARK: - Extensions
 
 extension SplashScreenViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController) {
@@ -79,20 +82,6 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             guard let self = self else { return }
             self.fetchOAuthToken(code)
             UIBlockingProgressHUD.show()
-        }
-    }
-    
-    private func fetchOAuthToken(_ code: String) {
-        oauthService.fetchOAuthToken(with: code) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success:
-                UIBlockingProgressHUD.dismiss()
-                
-            case .failure:
-                self.showAlert()
-                break
-            }
         }
     }
     
@@ -114,7 +103,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                     }}
                 self.switchToTabBarController()
             case .failure:
-                self.showAlert()
+                self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ok")
                 break
             }
         }
@@ -126,22 +115,24 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .success:
                 print("Успешно загружен аватар")
             case .failure:
-                self.showAlert()
+                self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ok")
                 break
             }
         }
     }
     
-    private func showAlert() {
-        
-        let alertController = UIAlertController(title: "Ошибка", message: "Что-то пошло не так", preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "Ok", style: .default) { _ in
-            alertController.dismiss(animated: true, completion: nil)
-            print("Ok button tapped")
+    private func fetchOAuthToken(_ code: String) {
+        oauthService.fetchOAuthToken(with: code) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                UIBlockingProgressHUD.dismiss()
+                
+            case .failure:
+                self.alertService.showAlert(title: "Ошибка", message: "Что-то пошло не так", buttonTitle: "Ok")
+                break
+            }
         }
-        alertController.addAction(action)
-        present(alertController, animated: true, completion: nil)
     }
 }
 
