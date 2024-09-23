@@ -15,7 +15,7 @@ final class AlertService {
     
     weak var delegate: UIViewController?
     weak var singleImageViewDelegate: SingleImageViewController?
-    weak var profileViewControllerDelegate: ProfileViewController?
+    weak var profileViewControllerDelegate: ProfilePresenterProtocol?
     
     func showAlert(title: String, message: String, buttonTitle: String) {
         
@@ -68,7 +68,8 @@ final class AlertService {
         alertController.addAction(confirmAction)
         alertController.addAction(declineAction)
         
-        profileViewControllerDelegate?.present(alertController, animated: true, completion: nil)
+        profileViewControllerDelegate?.view?.present(alertController, animated: true, completion: nil)
+        
     }
 }
 
