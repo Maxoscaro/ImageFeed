@@ -1,12 +1,7 @@
-//
-//  WebViewPresenterSpy.swift
-//  ImageFeed
-//
-//  Created by Maksim on 19.09.2024.
-//
-
 
 import Foundation
+import ImageFeed
+
 
 final class WebViewPresenterSpy: WebViewPresenterProtocol {
     var viewDidLoadCalled: Bool = false
@@ -17,10 +12,12 @@ final class WebViewPresenterSpy: WebViewPresenterProtocol {
     }
     
     func didUpdateProgressValue(_ newValue: Double) {
-    
+        
     }
     
     func code(from url: URL) -> String? {
         return nil
     }
+    
+    
 }

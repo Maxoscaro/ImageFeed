@@ -4,18 +4,20 @@
 //
 //  Created by Maksim on 23.09.2024.
 //
+
+import Foundation
 import ImageFeed
-import UIKit
 
 final class ProfilePresenterSpy: ProfilePresenterProtocol {
     var profile: Profile?
-    
     var view: ProfileViewViewControllerProtocol?
     var viewDidLoadCalled: Bool = false
     var isLogoutButtonTapped: Bool = false
-
+    
+    
     func viewDidLoad() {
         viewDidLoadCalled = true
+        print("ProfilePresenterSpy's viewDidLoad called") // Логирование вызова
     }
     
     func logout() {
@@ -33,6 +35,4 @@ final class ProfilePresenterSpy: ProfilePresenterProtocol {
     func getProfileAvatarURL() -> URL? {
         return nil
     }
-    
-    
 }

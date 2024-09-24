@@ -27,23 +27,21 @@ final class ProfileViewController: UIViewController & ProfileViewViewControllerP
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter?.viewDidLoad()
         configure(ProfilePresenter())
         self.setupNameLabel()
         self.setupDescriptionLabel()
         self.setupLogOutButton()
         self.setupProfileImageView()
         self.setupLoginNameLabel()
-        
-        presenter?.viewDidLoad()
         self.updateProfileDetails()
         
     }
     
     func configure(_ presenter: ProfilePresenterProtocol) {
-           self.presenter = presenter
-           presenter.view = self
-       }
+        self.presenter = presenter
+        presenter.view = self
+    }
     
     func updateAvatar() {
         guard let url = presenter?.getProfileAvatarURL() else { return }
