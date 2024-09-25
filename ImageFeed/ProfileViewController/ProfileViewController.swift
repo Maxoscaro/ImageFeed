@@ -27,14 +27,15 @@ final class ProfileViewController: UIViewController & ProfileViewViewControllerP
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.viewDidLoad()
-        configure(ProfilePresenter())
+        
         self.setupNameLabel()
         self.setupDescriptionLabel()
         self.setupLogOutButton()
         self.setupProfileImageView()
         self.setupLoginNameLabel()
-        self.updateProfileDetails()
+        
+        presenter?.viewDidLoad()
+       self.updateProfileDetails()
         
     }
     
@@ -55,6 +56,7 @@ final class ProfileViewController: UIViewController & ProfileViewViewControllerP
         profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
         profileImageView.clipsToBounds = true
     }
+    
     func getProfileImageView() -> UIImageView? {
         return profileImageView
     }
@@ -63,7 +65,7 @@ final class ProfileViewController: UIViewController & ProfileViewViewControllerP
     
     @IBAction private func didTapLogOutButton(_ sender: UIButton) {
         presenter?.logOutButtonTapped()
-        print("But Tap")
+        
     }
     
     private func setupProfileImageView() {

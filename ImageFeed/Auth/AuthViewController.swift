@@ -17,7 +17,16 @@ final class AuthViewController: UIViewController {
     
     weak var delegate: AuthViewControllerDelegate?
     
+    @IBOutlet weak var loginButton: UIButton!
+    
+    
     private let showWebViewSegueIdentifier = "ShowWebView"
+    
+    override func viewDidLoad() {
+            super.viewDidLoad()
+        
+            loginButton.accessibilityIdentifier = "Authenticate"
+        }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
@@ -32,6 +41,9 @@ final class AuthViewController: UIViewController {
         } else {
             super.prepare(for: segue, sender: sender)
         }
+    }
+    
+    @IBAction private func logInButtonTapped(_ sender: UIButton) {
     }
 }
 
