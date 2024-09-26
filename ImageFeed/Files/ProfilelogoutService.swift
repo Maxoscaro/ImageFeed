@@ -9,7 +9,7 @@ import Foundation
 import WebKit
 import Kingfisher
 
-public protocol ProfileLogoutServiceProtocol: AnyObject {
+  protocol ProfileLogoutServiceProtocol: AnyObject {
     func logout()
 }
 

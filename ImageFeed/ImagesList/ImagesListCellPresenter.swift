@@ -11,7 +11,6 @@ public protocol ImagesListCellPresenterProtocol: AnyObject {
     var view: ImagesListViewControllerProtocol? { get set }
     var imagesListService: ImagesListServiceProtocol? { get set }
     var photos: [Photo] { get set }
-    //var dateFormatter: DateFormatter { get set }
     func viewDidLoad()
     func addImageListObserver()
     func appendPhotos(_ newPhotos: [Photo])
@@ -25,8 +24,8 @@ public protocol ImagesListCellPresenterProtocol: AnyObject {
 final class ImagesListCellPresenter: ImagesListCellPresenterProtocol {
     
     var view: ImagesListViewControllerProtocol?
-    internal var imagesListService: ImagesListServiceProtocol?
-    internal var photos: [Photo] = []
+    var imagesListService: ImagesListServiceProtocol?
+    var photos: [Photo] = []
     private var imageListServiceObserver: NSObjectProtocol?
     
     

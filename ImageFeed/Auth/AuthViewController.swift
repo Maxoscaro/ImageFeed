@@ -23,27 +23,27 @@ final class AuthViewController: UIViewController {
     private let showWebViewSegueIdentifier = "ShowWebView"
     
     override func viewDidLoad() {
-            super.viewDidLoad()
+        super.viewDidLoad()
         
-            loginButton.accessibilityIdentifier = "Authenticate"
-        }
+        loginButton.accessibilityIdentifier = "Authenticate"
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
             guard let webViewViewController = segue.destination as? WebViewViewController else {
                 fatalError("Failed to prepare for \(showWebViewSegueIdentifier)")
             }
+            
             let authHelper = AuthHelper()
             let webViewPresenter = WebViewPresenter(authHelper: authHelper)
-                   webViewViewController.presenter = webViewPresenter
-                   webViewPresenter.view = webViewViewController
-                   webViewViewController.delegate = self
+            webViewViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewViewController
+            webViewViewController.delegate = self
+            
         } else {
+            
             super.prepare(for: segue, sender: sender)
         }
-    }
-    
-    @IBAction private func logInButtonTapped(_ sender: UIButton) {
     }
 }
 

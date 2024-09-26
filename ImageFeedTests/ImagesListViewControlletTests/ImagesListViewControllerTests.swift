@@ -33,8 +33,7 @@ final class ImagesListViewControllerTests: XCTestCase {
           let mockImagesListService = ImagesListMockService()
           presenter.configureImagesListService(mockImagesListService)
           mockImagesListService.shouldReturnError = true
-          
-          
+        
           // When
           presenter.fetchInitialPhotos()
           

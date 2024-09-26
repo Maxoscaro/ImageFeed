@@ -30,6 +30,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     }
 
     func viewDidLoad() {
+        
         guard let request = authHelper.authRequest() else { return }
     
         view?.load(request: request)

@@ -17,7 +17,7 @@ class Image_FeedUITests: XCTestCase {
     func testAuth() throws {
         
         let authenticateButton = app.buttons["Authenticate"]
-        
+       
             XCTAssertTrue(authenticateButton.waitForExistence(timeout: 10))
             authenticateButton.tap()
             
@@ -27,7 +27,7 @@ class Image_FeedUITests: XCTestCase {
             
             
             let loginTextField = webView.descendants(matching: .textField).element
-            XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
+            XCTAssertTrue(loginTextField.waitForExistence(timeout: 10))
             
             loginTextField.tap()
             loginTextField.typeText("")
@@ -35,7 +35,7 @@ class Image_FeedUITests: XCTestCase {
             
             
             let passwordTextField = webView.descendants(matching: .secureTextField).element
-            XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
+            XCTAssertTrue(passwordTextField.waitForExistence(timeout: 10))
             
             passwordTextField.tap()
             

@@ -20,7 +20,7 @@ public protocol ProfilePresenterProtocol: AnyObject {
 final class ProfilePresenter: ProfilePresenterProtocol {
    
     var profile: Profile?
-    var view: ProfileViewViewControllerProtocol?
+    weak var view: ProfileViewViewControllerProtocol?
     
     private var profileService: ProfileServiceProtocol?
     private var profileImageService: ProfileImageServiceProtocol?
