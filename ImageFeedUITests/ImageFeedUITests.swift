@@ -17,7 +17,9 @@ class Image_FeedUITests: XCTestCase {
     func testAuth() throws {
         
         let authenticateButton = app.buttons["Authenticate"]
-        
+        let exists = authenticateButton.waitForExistence(timeout: 10)
+        XCTAssertTrue(exists && authenticateButton.isHittable, "Кнопка 'Authenticate' не появилась вовремя или недоступна для нажатия")
+    
         XCTAssertTrue(authenticateButton.waitForExistence(timeout: 10))
         authenticateButton.tap()
         
@@ -48,7 +50,7 @@ class Image_FeedUITests: XCTestCase {
         webView.swipeUp()
         webView.buttons["Login"].tap()
         
-        sleep(2)
+        sleep(5)
         let tablesQuery = app.tables
         
         let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
