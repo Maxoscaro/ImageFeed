@@ -7,7 +7,13 @@
 
 import Foundation
 
-final class ImagesListService {
+public protocol ImagesListServiceProtocol: AnyObject {
+    var photos: [Photo] { get }
+    func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void)
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
     
     static let shared = ImagesListService()
     private init() {}
@@ -23,7 +29,7 @@ final class ImagesListService {
     
     //MARK: - Public Methods
     
-    func fetchPhotosNextPage() {
+    func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
         guard !isFetching else { return }
         
         isFetching = true
@@ -46,7 +52,6 @@ final class ImagesListService {
                     self?.currentPage -= 1
                 }
             }
-            
         }
         
         task.resume()
@@ -117,6 +122,7 @@ final class ImagesListService {
         let newPhotos = photoResult.map { Photo(from: $0) }
         photos.append(contentsOf: newPhotos)
         NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
+        print("Notification posted with updated photos")
     }
     
     private func makeChangeLikeRequest(photoId: String, isLike: Bool) -> URLRequest? {

@@ -8,58 +8,64 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+public protocol ProfileViewViewControllerProtocol: UIViewController {
+    
+    var presenter: ProfilePresenterProtocol? { get set }
+    func updateAvatar()
+}
+
+final class ProfileViewController: UIViewController & ProfileViewViewControllerProtocol {
+    
+    var presenter: ProfilePresenterProtocol?
     
     private var nameLabel: UILabel?
     private var loginNameLabel: UILabel?
     private var descriptionLabel: UILabel?
     private var profileImageView = UIImageView()
-    private var profileImageServiceObserver: NSObjectProtocol?
+    private var profileImage = UIImage(named: "avatar")
     
-    private let profileImage = UIImage(named: "avatar")
-    private let profileService = ProfileService.shared
-    private let profileImageService = ProfileImageService.shared
-    private let alertService = AlertService.shared
-    private let profileLogoutService = ProfileLogoutService.shared
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        alertService.profileViewControllerDelegate = self
-        self.setupProfileImageView()
         self.setupNameLabel()
-        self.setupLoginNameLabel()
         self.setupDescriptionLabel()
         self.setupLogOutButton()
-        guard let profile = profileService.profile else { return }
-        self.updateProfileDetails(profile: profile)
+        self.setupProfileImageView()
+        self.setupLoginNameLabel()
         
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter?.viewDidLoad()
+       self.updateProfileDetails()
+        
+    }
+    
+    func configure(_ presenter: ProfilePresenterProtocol) {
+        self.presenter = presenter
+        presenter.view = self
+    }
+    
+    func updateAvatar() {
+        guard let url = presenter?.getProfileAvatarURL() else { return }
+        profileImageView.kf.indicatorType = .activity
+        let processor = RoundCornerImageProcessor(cornerRadius: .greatestFiniteMagnitude)
+        profileImageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "placeholder.jpg"),
+            options: [.processor(processor)])
+        
+        profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
+        profileImageView.clipsToBounds = true
+    }
+    
+    func getProfileImageView() -> UIImageView? {
+        return profileImageView
     }
     
     //MARK: - Private Methods
     
     @IBAction private func didTapLogOutButton(_ sender: UIButton) {
-        alertService.showAlert(title: "Пока, пока", message: "Уверены, что хотите выйти?", buttonConfirmTitle: "Да", buttonDeclineTitle: "Нет")
-    }
-    
-    func logout(){
-        UIBlockingProgressHUD.show()
-        profileLogoutService.logout()
-        let splashViewCotroller = SplashScreenViewController()
-        splashViewCotroller.modalPresentationStyle = .fullScreen
-        self.present(splashViewCotroller, animated: true, completion: nil)
-        UIBlockingProgressHUD.dismiss()
+        presenter?.logOutButtonTapped()
+        
     }
     
     private func setupProfileImageView() {
@@ -126,7 +132,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupLogOutButton() {
-        let logOutButton = UIButton.systemButton(with: UIImage(named: "Exit")!, target: self, action: #selector(Self.didTapLogOutButton))
+        let logOutButton = UIButton.systemButton(with: UIImage(named: "Exit")!, target: self, action: #selector(didTapLogOutButton))
         logOutButton.tintColor = .red
         logOutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logOutButton)
@@ -138,27 +144,13 @@ final class ProfileViewController: UIViewController {
             logOutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-    
-    private func updateProfileDetails(profile: Profile) {
+  
+    private func updateProfileDetails() {
+        presenter?.updateProfileDetails()
+        guard let profile = presenter?.profile else { return }
         nameLabel?.text = profile.name
         descriptionLabel?.text = profile.bio
         loginNameLabel?.text = profile.loginName
     }
-    
-    private func updateAvatar() {
-        guard
-            let profileImageURL = profileImageService.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        profileImageView.kf.indicatorType = .activity
-        let processor = RoundCornerImageProcessor(cornerRadius: .greatestFiniteMagnitude)
-        profileImageView.kf.setImage(
-            with: url,
-            placeholder: UIImage(named: "placeholder.jpg"),
-            options: [.processor(processor)])
-        
-        profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
-        profileImageView.clipsToBounds = true
-        }
 }
 
